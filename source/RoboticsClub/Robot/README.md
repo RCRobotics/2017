@@ -1,0 +1,20 @@
+Here's the source code for the robot. To run this:
+ - Open RobotC
+ - Open the so>urce code in this folder.
+ - Set the communication port:
+   - Go to "View"->"Select Communication Port"
+   - Select the option whose port is COM4.
+   - Click "OK".
+ - Set the communication port:
+   - Go to "Robot"->"Set Vortex Communication Mode"->"VEXnet or USB".
+ - Set the Platform Type:
+   - Go to "Robot"->"Platform Type"->"VEX Robots"->"VEX 2.0 Cortex'.
+ - [optional] Flash the firmware:
+   - Got to "Robot"->"Download Firmware"->"Automatically Update VEX cortex".
+   - Click "OK".
+   - TODO: Finish this section.
+ - Flash the software:
+   - Click "Compile Program"
+     - If the environment has been set up incorrectly, or your code has syntax errors, you will get compile errors in the lower pane.
+   - Click "Download to Robot":
+     - TODO: Finish this section.
