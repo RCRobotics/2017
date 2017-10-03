@@ -38,96 +38,96 @@ void updateLaunch();
 //+++++++++++++++++++++++++++++++++++++++++++++| MAIN |+++++++++++++++++++++++++++++++++++++++++++++++
 task main ()
 {
-	int tick = 0;
+    int tick = 0;
 
-	int update_tick = 0;
-	const int update_ms = 5;
+    int update_tick = 0;
+    const int update_ms = 5;
 
-	while(true)
-	{
-		tick = time1[T1];
+    while(true)
+    {
+        tick = time1[T1];
 
-		if (tick - update_tick >= update_ms)
-		{
-			update_tick = tick;
+        if (tick - update_tick >= update_ms)
+        {
+            update_tick = tick;
 
-			updateWheels();
+            updateWheels();
 
-			updateClaw();
-			updateArm();
+            updateClaw();
+            updateArm();
 
 
-			updateLaunch();
-			updateForklift();
-		}
-	}
+            updateLaunch();
+            updateForklift();
+        }
+    }
 }
 
 void updateWheels()
 {
-	const int threshold = 10;   // helps to eliminate 'noise' from a joystick that isn't perfectly at (0,0)
+    const int threshold = 10;   // helps to eliminate 'noise' from a joystick that isn't perfectly at (0,0)
 
-	int joy_x = vexRT[Ch1];   // This is the RIGHT analog stick.  For LEFT, change 'Ch1' to 'Ch4'.
-	int joy_y = vexRT[Ch2];   // This is the RIGHT analog stick.  For LEFT, change 'Ch2' to 'Ch3'.
+    int joy_x = vexRT[Ch1];   // This is the RIGHT analog stick.  For LEFT, change 'Ch1' to 'Ch4'.
+    int joy_y = vexRT[Ch2];   // This is the RIGHT analog stick.  For LEFT, change 'Ch2' to 'Ch3'.
 
-	// Forward, and swing turns: (both abs(X) and abs(Y) are above the threshold, and Y is POSITIVE)
-	if((abs(joy_x) > threshold) && (abs(joy_y) > threshold) && (joy_y > 0))
-	{
-		motor[leftMotor]  = (joy_y + joy_x)/4;
-		motor[rightMotor] = (joy_y - joy_x)/4;
-	}
-	// Backwards and swing turns: (both abs(X) and abs(Y) are above the threshold, and Y is NEGATIVE)
-	else if((abs(joy_x) > threshold) && (abs(joy_y) > threshold) && (joy_y < 0))
-	{
-		motor[leftMotor]  = (joy_y - joy_x)/4;
-		motor[rightMotor] = (joy_y + joy_x)/4;
-	}
+    // Forward, and swing turns: (both abs(X) and abs(Y) are above the threshold, and Y is POSITIVE)
+    if((abs(joy_x) > threshold) && (abs(joy_y) > threshold) && (joy_y > 0))
+    {
+        motor[leftMotor]  = (joy_y + joy_x)/4;
+        motor[rightMotor] = (joy_y - joy_x)/4;
+    }
+    // Backwards and swing turns: (both abs(X) and abs(Y) are above the threshold, and Y is NEGATIVE)
+    else if((abs(joy_x) > threshold) && (abs(joy_y) > threshold) && (joy_y < 0))
+    {
+        motor[leftMotor]  = (joy_y - joy_x)/4;
+        motor[rightMotor] = (joy_y + joy_x)/4;
+    }
 
-	// Turning in place: (abs(X) is above the threshold, abs(Y) is below the threshold)
-	else if((abs(joy_x) > threshold) && (abs(joy_y) < threshold))
-	{
-		motor[leftMotor]  = joy_x;
-		motor[rightMotor] = (-1 * joy_x);
-	}
-	// Standing still: (both abs(X) and abs(Y) are below the threshold)
-	else
-	{
-		motor[leftMotor]  = 0;
-		motor[rightMotor] = 0;
-	}
+    // Turning in place: (abs(X) is above the threshold, abs(Y) is below the threshold)
+    else if((abs(joy_x) > threshold) && (abs(joy_y) < threshold))
+    {
+        motor[leftMotor]  = joy_x;
+        motor[rightMotor] = (-1 * joy_x);
+    }
+    // Standing still: (both abs(X) and abs(Y) are below the threshold)
+    else
+    {
+        motor[leftMotor]  = 0;
+        motor[rightMotor] = 0;
+    }
 }
 
 void updateClaw()
 {
-	//TODO
-	if(vexRT[Btn5U] == 1)
-	{
-		motor[clawMotor] = 40;
-	}
-	//should tighten grabber
-	else if(vexRT[Btn5D] == 1)
-	{
-		motor[clawMotor] = -40;
-	}
-	// should loosen grabber
-	else
-		// should leave it tightened when button is relesed
-	{
-		motor[clawMotor] = 0;
-	}
+    //TODO
+    if(vexRT[Btn5U] == 1)
+    {
+        motor[clawMotor] = 40;
+    }
+    //should tighten grabber
+    else if(vexRT[Btn5D] == 1)
+    {
+        motor[clawMotor] = -40;
+    }
+    // should loosen grabber
+    else
+        // should leave it tightened when button is relesed
+    {
+        motor[clawMotor] = 0;
+    }
 }
 
 void updateArm()
 {
-	//TOfinish
-	const int threshold = 10;
+    //TOfinish
+    const int threshold = 10;
 
-	int joy1_y2 = vexRT[Ch3];
+    int joy1_y2 = vexRT[Ch3];
 
-	if(abs(joy1_y2) > threshold)
-	{
-		motor[armMotor] = vexRT[Ch3];     //modeled on dual joystick control and dual joystick control with arm
-	}
+    if(abs(joy1_y2) > threshold)
+    {
+        motor[armMotor] = vexRT[Ch3];     //modeled on dual joystick control and dual joystick control with arm
+    }
 
 }
 
@@ -136,30 +136,30 @@ int lastBtn6dState = 0;
 
 void updateLaunch()
 {
-	int currentBtnState = vexRT[Btn6D];
+    int currentBtnState = vexRT[Btn6D];
 
-	// Only launch when last state was not pressed and current state is pressed
-	if(currentBtnState != lastBtn6dState && currentBtnState)
-	{
-		motor[launchServo] = launchToggle ? 100 : -100;
+    // Only launch when last state was not pressed and current state is pressed
+    if(currentBtnState != lastBtn6dState && currentBtnState)
+    {
+        motor[launchServo] = launchToggle ? 100 : -100;
 
-		// Toggle servo position
-		launchToggle = !launchToggle;
-	}
-	lastBtn6dState = currentBtnState;
+        // Toggle servo position
+        launchToggle = !launchToggle;
+    }
+    lastBtn6dState = currentBtnState;
 }
 
 void updateForklift()
 {
-	//TODO
-	if(vexRT[Btn8R])
-	{
-		motor[forkServo]-= 180;           //just to knock it over
-	}
-	//for now they just want it to be pushed over and let gravity do the rest
-	else
-	{
-		motor[forkServo] += 60;           //resets servo back some since at 0 it starts to far forward
-	}
+    //TODO
+    if(vexRT[Btn8R])
+    {
+        motor[forkServo]-= 180;           //just to knock it over
+    }
+    //for now they just want it to be pushed over and let gravity do the rest
+    else
+    {
+        motor[forkServo] += 60;           //resets servo back some since at 0 it starts to far forward
+    }
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
