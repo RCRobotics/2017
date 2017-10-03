@@ -23,7 +23,10 @@
 |*    [I/O Port]              [Name]              [Type]              [Description]                   *|
 |*    Motor - Port 2          rightMotor           VEX Motor           Right motor                    *|
 |*    Motor - Port 3          leftMotor            VEX Motor           Left motor                     *|
-|*    Motor - port 4          forkMotor            VEX Servo           Fork Lift                      *|
+|*    Motor - port 4          armMotor             VEX Motor           Arm motor                      *|
+|*    Motor - port 5          clawMotor            VEX Motor           claw motor                     *|
+|*    Motor - port 6          forkServo            VEX Servo           Fork Lift                      *|
+|*    Motor - port 7          launchServo          VEX Servo           Latch release                  *|
 \*----------------------------------------------------------------------------------------------------*/
 
 void updateWheels();
@@ -53,8 +56,9 @@ task main ()
 			updateClaw();
 			updateArm();
 
-			updateForklift();
+
 			updateLaunch();
+			updateForklift();
 		}
 	}
 }
@@ -100,11 +104,14 @@ void updateClaw()
 	{
 		motor[clawMotor] = 40;
 	}
+	//should tighten grabber
 	else if(vexRT[Btn5D] == 1)
 	{
 		motor[clawMotor] = -40;
 	}
+	// should loosen grabber
 	else
+		// should leave it tightened when button is relesed
 	{
 		motor[clawMotor] = 0;
 	}
@@ -149,9 +156,10 @@ void updateForklift()
 	{
 		motor[forkServo]-= 180;           //just to knock it over
 	}
+	//for now they just want it to be pushed over and let gravity do the rest
 	else
 	{
-		motor[forkServo] += 60;           //resets servo
+		motor[forkServo] += 60;           //resets servo back some since at 0 it starts to far forward
 	}
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
