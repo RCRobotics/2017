@@ -50,7 +50,7 @@ task main ()
 
         updateLaunch();
         updateForklift();
-        
+
         wait1Msec( update_ms );
     }
 }
@@ -101,8 +101,8 @@ void updateClaw()
     }
     // should loosen grabber
     else
-        // should leave it tightened when button is relesed
     {
+        // should leave it tightened when button is relesed
         motor[clawMotor] = 0;
     }
 }
@@ -113,7 +113,8 @@ void updateArm()
 
     if ( abs(joy1_y2) > threshold )
     {
-        motor[armMotor] = vexRT[Ch3];     //modeled on dual joystick control and dual joystick control with arm
+    	  //modeled on dual joystick control and dual joystick control with arm
+        motor[armMotor] = vexRT[Ch3];
     }
 
 }
