@@ -30,6 +30,7 @@
 void updateWheels();
 void updateClaw();
 void updateArm();
+//void updateForklift();
 void updateLaunch();
 
 const int threshold = 12;   // helps to eliminate 'noise' from a joystick that isn't perfectly at (0,0)
@@ -48,6 +49,7 @@ task main ()
 		updateArm();
 
 		updateLaunch();
+		//updateForklift();
 
 		wait1Msec( update_ms );
 	}
@@ -91,13 +93,13 @@ void updateClaw()
 	if(vexRT[Btn5U] == 1)
 	{
 	  // should leave it tightened when button is relesed
-		motor[clawMotor] = 100;
+		motor[clawMotor] = -100;
 		Btn5UToggle = true;
 	}
 	//should tighten grabber
 	else if(vexRT[Btn5D] == 1)
 	{
-		motor[clawMotor] = -100;
+		motor[clawMotor] = 100;
 		Btn5UToggle = false;
 	}
 	else if (vexRT[Btn5D] != 1 && Btn5UToggle == false)
@@ -141,6 +143,16 @@ void updateLaunch()
 	lastBtn6dState = currentBtnState;
 }
 
+//void updateForklift()
+//{
+	//if ( vexRT[Btn8R] )
+	//{
+	//	motor[forkServo] -= 180;           //just to knock it over
+//	}
 	//for now they just want it to be pushed over and let gravity do the rest
+//	else
+///	{
+//		motor[forkServo] += 60;           //resets servo back some since at 0 it starts to far forward
+//	}
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
