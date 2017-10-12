@@ -2,8 +2,7 @@
 #pragma config(Motor, port3, leftMotor  , tmotorServoContinuousRotation, openLoop)
 #pragma config(Motor, port4, armMotor   , tmotorServoContinuousRotation, openLoop)
 #pragma config(Motor, port5, clawMotor  , tmotorServoContinuousRotation, openLoop)
-#pragma config(Motor, port6, forkServo  , tmotorServoStandard          , openLoop)
-#pragma config(Motor, port7, launchServo, tmotorServoStandard          , openLoop)
+#pragma config(Motor, port6, launchServo, tmotorServoStandard          , openLoop)
 
 /*----------------------------------------------------------------------------------------------------*\
 |*                                             - TEST -                                               *|
@@ -31,10 +30,10 @@
 void updateWheels();
 void updateClaw();
 void updateArm();
-void updateForklift();
 void updateLaunch();
 
-const int threshold = 10;   // helps to eliminate 'noise' from a joystick that isn't perfectly at (0,0)
+const int threshold = 12;   // helps to eliminate 'noise' from a joystick that isn't perfectly at (0,0)
+
 
 //+++++++++++++++++++++++++++++++++++++++++++++| MAIN |+++++++++++++++++++++++++++++++++++++++++++++++
 task main ()
@@ -49,7 +48,6 @@ task main ()
 		updateArm();
 
 		updateLaunch();
-		updateForklift();
 
 		wait1Msec( update_ms );
 	}
@@ -64,14 +62,14 @@ void updateWheels()
 	// Forward, and swing turns: (both abs(X) and abs(Y) are above the threshold, and Y is POSITIVE)
 	if((abs(joy_x) > threshold) && (abs(joy_y) > threshold) && (joy_y > 0))
 	{
-		motor[leftMotor]  = (joy_y + joy_x)/2;
-		motor[rightMotor] = (joy_y - joy_x)/2;
+		motor[leftMotor]  = (joy_y + joy_x)/1;
+		motor[rightMotor] = (joy_y - joy_x)/1;
 	}
 	// Backwards and swing turns: (both abs(X) and abs(Y) are above the threshold, and Y is NEGATIVE)
 	else if((abs(joy_x) > threshold) && (abs(joy_y) > threshold) && (joy_y < 0))
 	{
-		motor[leftMotor]  = (joy_y - joy_x)/2;
-		motor[rightMotor] = (joy_y + joy_x)/2;
+		motor[leftMotor]  = (joy_y - joy_x)/1;
+		motor[rightMotor] = (joy_y + joy_x)/1;
 	}
 
 	// Turning in place: (abs(X) is above the threshold, abs(Y) is below the threshold)
@@ -87,22 +85,24 @@ void updateWheels()
 		motor[rightMotor] = 0;
 	}
 }
-
+bool Btn5UToggle = false;
 void updateClaw()
 {
 	if(vexRT[Btn5U] == 1)
 	{
-		motor[clawMotor] = -127;
+	  // should leave it tightened when button is relesed
+		motor[clawMotor] = 100;
+		Btn5UToggle = true;
 	}
 	//should tighten grabber
 	else if(vexRT[Btn5D] == 1)
 	{
-		motor[clawMotor] = +127;
+		motor[clawMotor] = -100;
+		Btn5UToggle = false;
 	}
-	// should loosen grabber
-	else
+	else if (vexRT[Btn5D] != 1 && Btn5UToggle == false)
 	{
-		// should leave it tightened when button is relesed
+  	// should loosen grabber
 		motor[clawMotor] = 0;
 	}
 }
@@ -133,7 +133,7 @@ void updateLaunch()
 	// Only launch when last state was not pressed and current state is pressed
 	if ( currentBtnState != lastBtn6dState && currentBtnState )
 	{
-		motor[launchServo] = launchToggle ? 127 : -127;
+		motor[launchServo] = launchToggle ? 180 : -180;
 
 		// Toggle servo position
 		launchToggle = !launchToggle;
@@ -141,16 +141,6 @@ void updateLaunch()
 	lastBtn6dState = currentBtnState;
 }
 
-void updateForklift()
-{
-	if ( vexRT[Btn8R] )
-	{
-		motor[forkServo] -= 180;           //just to knock it over
-	}
 	//for now they just want it to be pushed over and let gravity do the rest
-	else
-	{
-		motor[forkServo] += 60;           //resets servo back some since at 0 it starts to far forward
-	}
-}
+
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
