@@ -27,9 +27,12 @@
 \*----------------------------------------------------------------------------------------------------*/
 
 void updateWheels();
+void updateWheel(float scaler, int joystickChannel, int motorId);
 void updateClaw();
 void updateArm();
 void updateLaunch();
+bool updateToggle(int buttonId, int* lastButtonState);
+
 
 const int threshold = 10;   // helps to eliminate 'noise' from a joystick that isn't perfectly at (0,0)
 
@@ -52,27 +55,34 @@ task main ()
 	}
 }
 
+int lastBtn8LState = 0;
+
 void updateWheels()
 {
-
 	const float scaler = 0.75;
 
-	if(abs(vexRT[Ch3]) > threshold)         // If the left joystick is greater than or less than the threshold:
-	{
-	  motor[leftMotor]  = (float)vexRT[Ch3] * scaler;
-	}
-	else                                    // If the left joystick is within the threshold:
-	{
-	  motor[leftMotor]  = 0;                // Stop the left motor (cancel noise)
-	}
+	//TODO determine scalar
 
-	if(abs(vexRT[Ch2]) > threshold)         // If the right joystick is greater than or less than the threshold:
+	bool toggleState = updateToggle(Btn8L, &lastBtn8LState);
+
+	// Update left wheel
+	updateWheel(scaler, Ch3, leftMotor);
+	// Update right wheel
+	updateWheel(scaler, Ch2, rightMotor);
+}
+
+void updateWheel(float scaler, int joystickChannel, int motorId)
+{
+	// If the joystick is greater than or less than the threshold
+	if(abs(vexRT[joystickChannel]) > threshold)
 	{
-		motor[rightMotor]  = (float)vexRT[Ch2] * scaler;
+	  motor[motorId]  = (float)vexRT[joystickChannel] * scaler;
 	}
-	else                                    // If the right joystick is within the threshold:
+	// If the joystick is within the threshold
+	else
 	{
-	  motor[rightMotor] = 0;                // Stop the right motor (cancel noise)
+		// Stop the motor (cancel noise)
+	  motor[motorId]  = 0;
 	}
 }
 
@@ -135,6 +145,14 @@ void updateLaunch()
 		launchToggle = !launchToggle;
 	}
 	lastBtn6dState = currentBtnState;
+}
+
+bool updateToggle(int buttonId, int* lastButtonState)
+{
+	//TODO
+	*lastButtonState = 100;
+
+	return true;
 }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
