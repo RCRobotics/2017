@@ -27,11 +27,11 @@
 \*----------------------------------------------------------------------------------------------------*/
 
 void updateWheels();
-void updateWheel(float scaler, int joystickChannel, int motorId);
+void updateWheel(float wheelSpeedMultiplier, int joystickChannel, int motorId);
 void updateClaw();
 void updateArm();
 void updateLaunch();
-bool updateToggle(int buttonId, int* lastButtonState);
+bool updateToggle(int buttonId, bool toggle, int* lastButtonState);
 
 
 const int threshold = 10;   // helps to eliminate 'noise' from a joystick that isn't perfectly at (0,0)
@@ -56,27 +56,28 @@ task main ()
 }
 
 int lastBtn8LState = 0;
+bool wheelSpeedToggle = false;
 
 void updateWheels()
 {
-	const float scaler = 0.75;
+	const float lowSpeed = 0.4;
+	const float highSpeed = 1.0;
 
-	//TODO determine scalar
-
-	bool toggleState = updateToggle(Btn8L, &lastBtn8LState);
+	wheelSpeedToggle = updateToggle(Btn8L, wheelSpeedToggle, &lastBtn8LState);
+	float wheelSpeed = wheelSpeedToggle ? lowSpeed : highSpeed;
 
 	// Update left wheel
-	updateWheel(scaler, Ch3, leftMotor);
+	updateWheel(wheelSpeed, Ch3, leftMotor);
 	// Update right wheel
-	updateWheel(scaler, Ch2, rightMotor);
+	updateWheel(wheelSpeed, Ch2, rightMotor);
 }
 
-void updateWheel(float scaler, int joystickChannel, int motorId)
+void updateWheel(float wheelSpeedMultiplier, int joystickChannel, int motorId)
 {
 	// If the joystick is greater than or less than the threshold
 	if(abs(vexRT[joystickChannel]) > threshold)
 	{
-	  motor[motorId]  = (float)vexRT[joystickChannel] * scaler;
+	  motor[motorId]  = (float)vexRT[joystickChannel] * wheelSpeedMultiplier;
 	}
 	// If the joystick is within the threshold
 	else
@@ -129,30 +130,31 @@ void updateArm()
 	}
 }
 
-bool launchToggle = false;
 int lastBtn6dState = 0;
+bool launchToggle = false;
 
 void updateLaunch()
 {
-	int currentBtnState = vexRT[Btn8D];
+	const int releasedPosition = -180;
+	const int loadedPosition = 180;
 
-	// Only launch when last state was not pressed and current state is pressed
-	if ( currentBtnState != lastBtn6dState && currentBtnState )
-	{
-		motor[launchServo] = launchToggle ? 180 : -180;
-
-		// Toggle servo position
-		launchToggle = !launchToggle;
-	}
-	lastBtn6dState = currentBtnState;
+	launchToggle = updateToggle(Btn6D, launchToggle, &lastBtn6dState);
+	motor[launchServo] = launchToggle ? releasedPosition : loadedPosition;
 }
 
-bool updateToggle(int buttonId, int* lastButtonState)
+bool updateToggle(int buttonId, bool toggle, int* lastButtonState)
 {
-	//TODO
-	*lastButtonState = 100;
+	int currentBtnState = vexRT[buttonId];
 
-	return true;
+	// Only toggle when last state was not pressed and current state is pressed
+	if ( currentBtnState != *lastButtonState && currentBtnState )
+	{
+		toggle = !toggle;
+	}
+
+	*lastButtonState = currentBtnState;
+
+	return toggle;
 }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
